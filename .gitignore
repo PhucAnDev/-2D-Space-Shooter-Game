@@ -1,0 +1,32 @@
+# --- Unity ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Ss]ysInfo/
+[Aa]rtifacts/
+
+# VS / Rider / IDE
+.vs/
+.vscode/
+.idea/
+
+# Auto-generated project files
+*.csproj
+*.sln
+*.suo
+*.user
+*.unityproj
+*.pidb
+*.booproj
+
+# Crash/Reports
+*.stacktrace
+
+# Others
+[Dd]ebug/
+[Rr]elease/
