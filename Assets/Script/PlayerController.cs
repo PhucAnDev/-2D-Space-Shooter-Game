@@ -11,52 +11,61 @@ public class PlayerController : MonoBehaviour
     public float destroyTime = 5f;
 
     [Header("Shield")]
-    public GameObject shieldPrefab;     // kéo prefab Shield vào đây
-    public float shieldDuration = 2f;   // bật trong 2 giây
-    public float shieldCooldown = 5f;   // chờ 5 giây mới bật lại
+    public GameObject shieldPrefab;
+    public float shieldDuration = 2f;
+    public float shieldCooldown = 5f;
+
     private GameObject shieldInstance;
     private bool shieldReady = true;
+    private bool isShieldActive = false;
+
+    // cache layer ids
+    int playerLayer, enemyLayer, enemyBulletLayer;
+
+    void Awake()
+    {
+        playerLayer = LayerMask.NameToLayer("Player");
+        enemyLayer = LayerMask.NameToLayer("Enemy");
+        enemyBulletLayer = LayerMask.NameToLayer("EnemyBullet"); // nếu chưa có thì sẽ là -1
+    }
 
     void Update()
     {
         PlayerMovement();
-        //PlayerShoot();
+
         if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TryActivateShield(); // bật shield cùng lúc
-        }
+            TryActivateShield();
+        // nếu muốn Space vừa bắn vừa bật khiên: gọi thêm PlayerShoot();
     }
 
     void PlayerMovement()
     {
         float xpos = Input.GetAxis("Horizontal");
         float ypos = Input.GetAxis("Vertical");
-        Vector3 movement = new Vector3(xpos, ypos, 0) * speed * Time.deltaTime;
-        transform.Translate(movement);
+        transform.Translate(new Vector3(xpos, ypos, 0) * speed * Time.deltaTime);
     }
 
     void PlayerShoot()
     {
-        GameObject gm = Instantiate(missile, missileSpawnPoint.position, missileSpawnPoint.rotation);
+        var gm = Instantiate(missile, missileSpawnPoint.position, missileSpawnPoint.rotation);
         Destroy(gm, destroyTime);
     }
 
     void TryActivateShield()
     {
-        if (!shieldReady) return;
+        if (!shieldReady || shieldPrefab == null) return;
         StartCoroutine(ShieldRoutine());
     }
 
     IEnumerator ShieldRoutine()
     {
         shieldReady = false;
+        isShieldActive = true;
 
-        // tạo 1 lần rồi tái sử dụng
         if (shieldInstance == null)
         {
             shieldInstance = Instantiate(shieldPrefab, transform);
-            shieldInstance.transform.localPosition = Vector3.zero; // ôm sát player
-            // nếu shield là object 3D, có thể cần chỉnh localScale cho vừa
+            shieldInstance.transform.localPosition = Vector3.zero;
         }
         else
         {
@@ -65,18 +74,34 @@ public class PlayerController : MonoBehaviour
         }
 
         shieldInstance.SetActive(true);
+
+        // ➊ bỏ qua va chạm Player↔Enemy (và Player↔EnemyBullet nếu có)
+        if (playerLayer >= 0 && enemyLayer >= 0)
+            Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+        if (playerLayer >= 0 && enemyBulletLayer >= 0)
+            Physics2D.IgnoreLayerCollision(playerLayer, enemyBulletLayer, true);
+
         yield return new WaitForSeconds(shieldDuration);
 
+        // tắt khiên
+        isShieldActive = false;
         shieldInstance.SetActive(false);
-        yield return new WaitForSeconds(shieldCooldown);
 
+        // ➋ bật lại va chạm
+        if (playerLayer >= 0 && enemyLayer >= 0)
+            Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, false);
+        if (playerLayer >= 0 && enemyBulletLayer >= 0)
+            Physics2D.IgnoreLayerCollision(playerLayer, enemyBulletLayer, false);
+
+        yield return new WaitForSeconds(shieldCooldown);
         shieldReady = true;
     }
 
-    // Game Over khi đụng Enemy (nếu không dùng shield để chặn)
-    private void OnCollisionEnter2D(Collision2D collision)
+    // Nếu vì lý do nào đó va chạm vẫn lọt, phòng thủ thêm ở đây:
+    void OnCollisionEnter2D(Collision2D col)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (isShieldActive) return; // đang có khiên thì không chết
+        if (col.collider.CompareTag("Enemy"))
         {
             Destroy(gameObject);
             Debug.Log("Game Over");
