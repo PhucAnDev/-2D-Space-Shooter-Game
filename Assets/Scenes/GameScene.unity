@@ -798,6 +798,11 @@ MonoBehaviour:
   minInstantiateValue: -7
   maxInstantiateValue: 7
   enemyDestroyTime: 10
+  startSpawnInterval: 1.5
+  minSpawnInterval: 0.25
+  spawnAccelPerSec: 0.02
+  baseEnemySpeed: 1
+  speedRampPerSec: 0.02
 --- !u!4 &2002210172
 Transform:
   m_ObjectHideFlags: 0
