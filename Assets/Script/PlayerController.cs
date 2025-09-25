@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -104,7 +105,7 @@ public class PlayerController : MonoBehaviour
         if (col.collider.CompareTag("Enemy"))
         {
             Destroy(gameObject);
-            Debug.Log("Game Over");
+            SceneManager.LoadScene("GameOverScene");
         }
     }
 }

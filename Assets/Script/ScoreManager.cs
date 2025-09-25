@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using System.Collections;
 using TMPro;
-using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ScoreManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] TMP_Text scoreText;
 
     public int Score { get; private set; } = 0;
+    public int HighestScore { get; private set; } = 0;
     public bool isCounting = true;
 
     void Start()
@@ -22,7 +24,7 @@ public class ScoreManager : MonoBehaviour
         {
             if (isCounting)
             {
-                Score += 1;          // +1 �i?m m?i gi�y
+                Score += 1;          // +1 ði?m m?i giây
                 UpdateUI();
             }
             yield return new WaitForSeconds(1f);
@@ -42,6 +44,26 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText != null)
             scoreText.text = $"Score: {Score}";
+    }
+    public void OnGameOver()
+    {
+        // stop tính điểm
+        StopCounting();
+
+        // Lưu LastScore
+        PlayerPrefs.SetInt("LastScore", Score);
+
+        // Cập nhật & lưu HighestScore nếu cần
+        if (Score > HighestScore)
+        {
+            HighestScore = Score;
+            PlayerPrefs.SetInt("HighestScore", HighestScore);
+        }
+
+        // Ghi ngay xuống disk
+        PlayerPrefs.Save();
+
+        FindObjectOfType<ScoreManager>().OnGameOver();
     }
 }
 
