@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour
     private bool shieldReady = true;
     private bool isShieldActive = false;
 
+    [Header("Sound")]
+    public AudioClip impactSound;   // thêm clip khi va chạm
+    private AudioSource audioSource;
+
     // cache layer ids
     int playerLayer, enemyLayer, enemyBulletLayer;
 
@@ -28,6 +32,10 @@ public class PlayerController : MonoBehaviour
         playerLayer = LayerMask.NameToLayer("Player");
         enemyLayer = LayerMask.NameToLayer("Enemy");
         enemyBulletLayer = LayerMask.NameToLayer("EnemyBullet"); // nếu chưa có thì sẽ là -1
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
@@ -104,8 +112,18 @@ public class PlayerController : MonoBehaviour
         if (isShieldActive) return; // đang có khiên thì không chết
         if (col.collider.CompareTag("Enemy"))
         {
-            Destroy(gameObject);
-            SceneManager.LoadScene("GameOverScene");
+            if (impactSound != null && audioSource != null)
+                audioSource.PlayOneShot(impactSound);
+            GetComponent<SpriteRenderer>().enabled = false;
+            GetComponent<Collider2D>().enabled = false;
+
+            float delay = impactSound != null ? impactSound.length : 0.5f;
+            StartCoroutine(LoadGameOverAfterDelay(delay));
         }
+    }
+    IEnumerator LoadGameOverAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene("GameOverScene");
     }
 }
