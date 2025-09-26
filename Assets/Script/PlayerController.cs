@@ -22,7 +22,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Sound")]
     public AudioClip impactSound;   // thêm clip khi va chạm
+    public AudioClip coinPickSound;
     private AudioSource audioSource;
+
 
     // cache layer ids
     int playerLayer, enemyLayer, enemyBulletLayer;
@@ -121,9 +123,28 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(LoadGameOverAfterDelay(delay));
         }
     }
+
+
     IEnumerator LoadGameOverAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
         SceneManager.LoadScene("GameOverScene");
     }
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.CompareTag("Coin"))
+        {
+            if (audioSource != null && coinPickSound != null)
+                audioSource.PlayOneShot(coinPickSound);
+            Destroy(col.gameObject);
+
+            // tìm ScoreManager trong scene và cộng điểm
+            ScoreManager sm = FindObjectOfType<ScoreManager>();
+            if (sm != null)
+            {
+                sm.AddPoints(5);
+            }
+        }
+    }
+
 }

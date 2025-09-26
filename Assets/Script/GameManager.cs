@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 
 public class GameManager : MonoBehaviour
@@ -10,19 +10,28 @@ public class GameManager : MonoBehaviour
     public float enemyDestroyTime = 10f;
 
     [Header("Spawn pacing")]
-    public float startSpawnInterval = 1.5f;   // lúc ð?u: 1.5s 1 con
+    public float startSpawnInterval = 1.5f;   // lÃºc Ã°?u: 1.5s 1 con
     public float minSpawnInterval = 0.25f;  // nhanh nh?t: 0.25s 1 con
-    public float spawnAccelPerSec = 0.02f;  // m?i giây gi?m 0.02s (t?i min)
+    public float spawnAccelPerSec = 0.02f;  // m?i giÃ¢y gi?m 0.02s (t?i min)
 
     [Header("Enemy speed scaling")]
-    public float baseEnemySpeed = 1.0f;   // t?c ð? rõi lúc ð?u
-    public float speedRampPerSec = 0.02f;  // m?i giây tãng thêm 0.02 (tu? ch?nh)
+    public float baseEnemySpeed = 1.0f;   // t?c Ã°? rÃµi lÃºc Ã°?u
+    public float speedRampPerSec = 0.02f;  // m?i giÃ¢y tÃ£ng thÃªm 0.02 (tu? ch?nh)
 
-    private float elapsed;                    // th?i gian trôi qua
+    private float elapsed;                    // th?i gian trÃ´i qua
+
+    [Header("Coin")]
+    public GameObject coinPrefab;
+    public float coinSpawnInterval = 5f;
+    public float coinDestroyTime = 8f;
+    public float coinFallSpeed = 0.5f;
+
+
 
     void Start()
     {
         StartCoroutine(SpawnLoop());
+        StartCoroutine(SpawnCoins());
     }
 
     IEnumerator SpawnLoop()
@@ -31,7 +40,7 @@ public class GameManager : MonoBehaviour
 
         while (true)
         {
-            // th?i ði?m hi?n t?i
+            // th?i Ã°i?m hi?n t?i
             float currentSpeed = baseEnemySpeed + elapsed * speedRampPerSec;
             interval = Mathf.Max(minSpawnInterval, startSpawnInterval - elapsed * spawnAccelPerSec);
 
@@ -39,18 +48,32 @@ public class GameManager : MonoBehaviour
             Vector3 pos = new Vector3(Random.Range(minInstantiateValue, maxInstantiateValue), 6f, 0f);
             GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.Euler(0f, 0f, 180f));
 
-            // gán t?c ð? rõi tãng d?n
+            // gÃ¡n t?c Ã°? rÃµi tÃ£ng d?n
             var ec = enemy.GetComponent<EnemyController>();
             if (ec != null) ec.speed = currentSpeed;
 
-            // t? hu? sau X giây
+            // t? hu? sau X giÃ¢y
             Destroy(enemy, enemyDestroyTime);
 
             // ch? theo interval hi?n t?i
             yield return new WaitForSeconds(interval);
 
-            // c?ng elapsed theo ðúng th?i gian ð? ch?
+            // c?ng elapsed theo Ã°Ãºng th?i gian Ã°? ch?
             elapsed += interval;
+        }
+    }
+    IEnumerator SpawnCoins()
+    {
+        while (true)
+        {
+            Vector3 pos = new Vector3(Random.Range(-7f, 9f), 6f, 0f);
+            GameObject coin = Instantiate(coinPrefab, pos, Quaternion.identity);
+            CoinSpawn cc = coin.GetComponent<CoinSpawn>();
+            if (cc != null)
+                cc.fallSpeed = coinFallSpeed;
+
+            Destroy(coin, coinDestroyTime);
+            yield return new WaitForSeconds(coinSpawnInterval);
         }
     }
 }
