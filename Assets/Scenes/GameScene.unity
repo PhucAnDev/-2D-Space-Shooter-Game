@@ -1302,7 +1302,7 @@ MonoBehaviour:
   coinPrefab: {fileID: 8913952642452237633, guid: aaa952474c1dd624399ea7ebbb188c40, type: 3}
   coinSpawnInterval: 5
   coinDestroyTime: 8
-  coinFallSpeed: 1
+  coinFallSpeed: 3.75
 --- !u!4 &2002210172
 Transform:
   m_ObjectHideFlags: 0

@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 5576770750512949435}
   - component: {fileID: 2645606550079847948}
   - component: {fileID: -7701803467918144411}
-  - component: {fileID: 7198350535756547567}
   - component: {fileID: 736408520810485875}
+  - component: {fileID: 6157603797740394946}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Coin
@@ -237,19 +237,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7198350535756547567
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8913952642452237633}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 177ce7e86f595584e885127bdfa37016, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  fallSpeed: 1
 --- !u!50 &736408520810485875
 Rigidbody2D:
   serializedVersion: 5
@@ -265,7 +252,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -277,3 +264,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6157603797740394946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8913952642452237633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 177ce7e86f595584e885127bdfa37016, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinSpawn
