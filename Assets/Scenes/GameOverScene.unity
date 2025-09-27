@@ -1009,7 +1009,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1933715587}
-  - component: {fileID: 1933715586}
   - component: {fileID: 1933715585}
   m_Layer: 0
   m_Name: Score
@@ -1032,20 +1031,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameOverScore
   Score: {fileID: 1089052218}
   HighestScore: {fileID: 214349295}
---- !u!114 &1933715586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1933715584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 824197e380fac9448965d012c104a302, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  scoreText: {fileID: 1089052218}
-  isCounting: 1
 --- !u!4 &1933715587
 Transform:
   m_ObjectHideFlags: 0

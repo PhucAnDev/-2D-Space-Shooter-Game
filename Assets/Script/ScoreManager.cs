@@ -8,12 +8,13 @@ public class ScoreManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] TMP_Text scoreText;
 
-    public int Score { get; private set; } = 0;
-    public int HighestScore { get; private set; } = 0;
+    public int Score { get; private set; } 
+    public int HighestScore { get; private set; }
     public bool isCounting = true;
 
     void Start()
     {
+        HighestScore = PlayerPrefs.GetInt("HighestScore", 0); // load high score đã lưu
         UpdateUI();
         StartCoroutine(AddScoreEverySecond());
     }
@@ -47,23 +48,18 @@ public class ScoreManager : MonoBehaviour
     }
     public void OnGameOver()
     {
-        // stop tính điểm
         StopCounting();
-
-        // Lưu LastScore
         PlayerPrefs.SetInt("LastScore", Score);
-
-        // Cập nhật & lưu HighestScore nếu cần
         if (Score > HighestScore)
         {
             HighestScore = Score;
             PlayerPrefs.SetInt("HighestScore", HighestScore);
         }
-
-        // Ghi ngay xuống disk
         PlayerPrefs.Save();
 
-        FindObjectOfType<ScoreManager>().OnGameOver();
+        Debug.Log($"[ScoreManager] Save: Last={Score}, High={HighestScore}");
+        SceneManager.LoadScene("GameOverScene");
     }
+
 }
 
