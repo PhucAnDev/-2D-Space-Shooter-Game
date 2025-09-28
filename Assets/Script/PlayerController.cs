@@ -53,10 +53,16 @@ public class PlayerController : MonoBehaviour
 
     void PlayerMovement()
     {
-        float xpos = Input.GetAxis("Horizontal");
-        float ypos = Input.GetAxis("Vertical");
-        transform.Translate(new Vector3(xpos, ypos, 0) * speed * Time.deltaTime);
+        int x = 0, y = 0;
+        if (Input.GetKey(KeyCode.A)) x -= 1;
+        if (Input.GetKey(KeyCode.D)) x += 1;
+        if (Input.GetKey(KeyCode.S)) y -= 1;
+        if (Input.GetKey(KeyCode.W)) y += 1;
+
+        Vector3 dir = new Vector3(x, y, 0f).normalized;
+        transform.Translate(dir * speed * Time.deltaTime);
     }
+
 
     void PlayerShoot()
     {
@@ -160,7 +166,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if ((col.CompareTag("Enemy") || col.CompareTag("EnemyBullet")) && !isShieldActive)
+        if ((col.CompareTag("Enemy")) && !isShieldActive)
         {
             var sm = FindObjectOfType<ScoreManager>();
             if (sm != null)
