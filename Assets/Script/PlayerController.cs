@@ -134,9 +134,15 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator LoadGameOverAfterDelay(float delay)
     {
+        var sm = FindObjectOfType<ScoreManager>();
+        if (sm != null)
+            sm.OnGameOver();
+        else
+            SceneManager.LoadScene("GameOverScene");
         yield return new WaitForSeconds(delay);
         SceneManager.LoadScene("GameOverScene");
     }
+
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("Coin"))
@@ -145,20 +151,23 @@ public class PlayerController : MonoBehaviour
                 audioSource.PlayOneShot(coinPickSound);
             Destroy(col.gameObject);
 
-            // tìm ScoreManager trong scene và cộng điểm
-            ScoreManager sm = FindObjectOfType<ScoreManager>();
-            if (sm != null)
+            // cộng điểm
+            ScoreManager score = FindObjectOfType<ScoreManager>();
+            if (score != null)
             {
-                sm.AddPoints(5);
+                score.AddPoints(5);
             }
+            return;
         }
+
+        if ((col.CompareTag("Enemy") || col.CompareTag("EnemyBullet")) && !isShieldActive)
+        {
             var sm = FindObjectOfType<ScoreManager>();
             if (sm != null)
                 sm.OnGameOver();
             else
                 SceneManager.LoadScene("GameOverScene");
         }
-
     }
 
 
@@ -173,8 +182,5 @@ public class PlayerController : MonoBehaviour
         float elapsed = Time.time - shieldLastUsedTime;
         return Mathf.Clamp01(elapsed / shieldCooldown);
     }
-
-
-
-
 }
+
