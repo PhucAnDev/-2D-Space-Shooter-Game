@@ -276,3 +276,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 177ce7e86f595584e885127bdfa37016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinSpawn
+  fallSpeed: 0.1
