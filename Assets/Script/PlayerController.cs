@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     private GameObject shieldInstance;
     private bool shieldReady = true;
     private bool isShieldActive = false;
+    private float lastShieldTime = -999f;
+    private float shieldLastUsedTime;
 
     [Header("Sound")]
     public AudioClip impactSound;   // thêm clip khi va chạm
@@ -92,18 +94,23 @@ public class PlayerController : MonoBehaviour
         if (playerLayer >= 0 && enemyBulletLayer >= 0)
             Physics2D.IgnoreLayerCollision(playerLayer, enemyBulletLayer, true);
 
+        // Đợi khiên chạy xong
         yield return new WaitForSeconds(shieldDuration);
 
-        // tắt khiên
+        // ➋ Tắt khiên
         isShieldActive = false;
         shieldInstance.SetActive(false);
 
-        // ➋ bật lại va chạm
+        // Lưu thời điểm bắt đầu cooldown
+        shieldLastUsedTime = Time.time;
+
+        // Bật lại va chạm
         if (playerLayer >= 0 && enemyLayer >= 0)
             Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, false);
         if (playerLayer >= 0 && enemyBulletLayer >= 0)
             Physics2D.IgnoreLayerCollision(playerLayer, enemyBulletLayer, false);
 
+        // Đợi cooldown
         yield return new WaitForSeconds(shieldCooldown);
         shieldReady = true;
     }
@@ -145,6 +152,29 @@ public class PlayerController : MonoBehaviour
                 sm.AddPoints(5);
             }
         }
+            var sm = FindObjectOfType<ScoreManager>();
+            if (sm != null)
+                sm.OnGameOver();
+            else
+                SceneManager.LoadScene("GameOverScene");
+        }
+
     }
+
+
+    public bool IsShieldReady() => shieldReady;
+
+
+
+
+    public float GetShieldCooldownProgress()
+    {
+        if (shieldReady) return 1f; // đã sẵn sàng
+        float elapsed = Time.time - shieldLastUsedTime;
+        return Mathf.Clamp01(elapsed / shieldCooldown);
+    }
+
+
+
 
 }

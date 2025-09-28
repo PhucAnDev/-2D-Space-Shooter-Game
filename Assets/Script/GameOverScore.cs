@@ -11,10 +11,12 @@ public class GameOverScore : MonoBehaviour
         int last = PlayerPrefs.GetInt("LastScore", 0);
         int high = PlayerPrefs.GetInt("HighestScore", 0);
 
+        Debug.Log($"[GameOverScore] Load: Last={last}, High={high}");
+
         if (Score != null)
             Score.text = $"Your Score: {last}";
-
         if (HighestScore != null)
             HighestScore.text = $"High Score: {high}";
     }
+
 }
