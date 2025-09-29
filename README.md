@@ -1,7 +1,7 @@
-# 🚀 Space Shooter – Unity Game  
+# 🚀 Project Moonlight – Unity Game  
 
 ## 🎮 Giới thiệu  
-**Space Shooter** là một game bắn súng trong không gian do mình phát triển bằng Unity.  
+**Project Moonlight** là một game bắn súng trong không gian do mình phát triển bằng Unity.  
 Người chơi sẽ điều khiển một phi thuyền bay giữa vũ trụ bao la, né tránh thiên thạch, thu thập coin và sử dụng khiên để sinh tồn lâu nhất có thể.  
 
 Game tập trung vào **phản xạ nhanh** và **quản lý tài nguyên** (khiên & thời gian). Mục tiêu chính là **đạt điểm cao nhất** và vượt qua kỷ lục của bản thân.  
@@ -27,7 +27,6 @@ Game tập trung vào **phản xạ nhanh** và **quản lý tài nguyên** (khi
 
 - **W/A/S/D hoặc phím mũi tên** → Di chuyển phi thuyền  
 - **Space** → Kích hoạt khiên  
-- (Có thể mở rộng thêm: Space để bắn, nếu bạn muốn sau này)  
 
 ---
 
@@ -44,5 +43,10 @@ Game tập trung vào **phản xạ nhanh** và **quản lý tài nguyên** (khi
 
 ## 📸 Hình ảnh minh họa  
 
+---
 
+## 🎮 Link game: 
 
+https://phucandev.itch.io/project-moonlight
+
+---
