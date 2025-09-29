@@ -45,7 +45,7 @@ Game tập trung vào **phản xạ nhanh** và **quản lý tài nguyên** (khi
 
 ---
 
-## 🎮 Link game: 
+## 🎮 Link deploy game: 
 
 https://phucandev.itch.io/project-moonlight
 
