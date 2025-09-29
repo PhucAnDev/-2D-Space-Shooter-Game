@@ -45,8 +45,4 @@ Game tập trung vào **phản xạ nhanh** và **quản lý tài nguyên** (khi
 ## 📸 Hình ảnh minh họa  
 
 
-## 🔧 Cài đặt & chạy  
 
-1. Clone repo về máy:  
-   ```bash
-   git clone https://github.com/yourusername/space-shooter.git
