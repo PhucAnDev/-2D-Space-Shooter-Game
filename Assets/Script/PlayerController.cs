@@ -27,9 +27,147 @@ public class PlayerController : MonoBehaviour
     public AudioClip coinPickSound;
     private AudioSource audioSource;
 
+    public float moveSpeed = 7f;
+    private bool isBoosting = false;
+    public float boostMultiplier = 2f;
+    private Rigidbody2D rb;
 
     // cache layer ids
     int playerLayer, enemyLayer, enemyBulletLayer;
+
+
+    [Header("Fuel System")]
+    public float maxFuel = 100f;
+    public float fuelConsumptionRate = 5f; // Nhiên liệu tiêu thụ mỗi giây
+    public float currentFuel;
+    public UnityEngine.UI.Slider fuelSlider; // Tham chiếu đến Slider UI hiển thị nhiên liệu
+
+    void Start()
+    {
+        currentFuel = maxFuel; // Đặt nhiên liệu đầy khi bắt đầu
+        if (fuelSlider != null)
+        {
+            fuelSlider.maxValue = 1f; // Giá trị tối đa của slider
+            fuelSlider.value = 1f;   // Đặt slider đầy
+        }
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        rb = GetComponent<Rigidbody2D>();
+        currentFuel = maxFuel;
+
+        // Đảm bảo có Rigidbody2D
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody2D>();
+            rb.gravityScale = 0; // Không có trọng lực trong không gian
+        }
+    }
+
+    void Update()
+    {
+
+        ConsumeFuel();
+
+        if (currentFuel <= 0)
+        {
+            TriggerGameOver();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            TryActivateShield();
+    }
+
+    void FixedUpdate()
+    {
+        PlayerMovement();
+    }
+
+    void ConsumeFuel()
+    {
+        currentFuel -= fuelConsumptionRate * Time.deltaTime;
+        currentFuel = Mathf.Clamp(currentFuel, 0, maxFuel);
+
+        UpdateFuelSlider();
+    }
+
+    public void RefillFuel(float amount)
+    {
+        currentFuel += amount;
+        currentFuel = Mathf.Clamp(currentFuel, 0, maxFuel);
+
+        UpdateFuelSlider();
+    }
+
+    void UpdateFuelSlider()
+    {
+        if (fuelSlider != null)
+        {
+            float targetValue = currentFuel / maxFuel;
+            fuelSlider.value = targetValue;
+
+            // Kiểm tra nếu năng lượng cạn kiệt
+            if (targetValue <= 0)
+            {
+                // Ẩn Fill Area
+                Transform fillArea = fuelSlider.transform.Find("Fill Area");
+                if (fillArea != null)
+                {
+                    fillArea.gameObject.SetActive(false);
+                }
+            }
+        }
+    }
+
+
+    void TriggerGameOver()
+    {
+        var scoreManager = FindObjectOfType<ScoreManager>();
+        if (scoreManager != null)
+        {
+            scoreManager.OnGameOver(); // Save the score
+        }
+        SceneManager.LoadScene("GameOverScene");
+    }
+
+    void PlayerMovement()
+    {
+        // Lấy input từ các phím mũi tên hoặc WASD
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+
+        // Tạo vector di chuyển
+        Vector2 movement = new Vector2(horizontalInput, verticalInput);
+
+        // Chuẩn hóa vector để di chuyển với tốc độ ổn định theo mọi hướng
+        if (movement.magnitude > 1f)
+        {
+            movement.Normalize();
+        }
+
+        // Áp dụng tốc độ
+        float currentSpeed = moveSpeed;
+        if (isBoosting)
+        {
+            currentSpeed *= boostMultiplier;
+        }
+
+        movement *= currentSpeed;
+
+        // Di chuyển spaceship
+        rb.linearVelocity = movement;
+
+        // Xoay spaceship theo hướng di chuyển (tuỳ chọn)
+        if (movement != Vector2.zero)
+        {
+            float angle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg - 90f;
+            rb.rotation = angle;
+        }
+    }
 
     void Awake()
     {
@@ -42,33 +180,10 @@ public class PlayerController : MonoBehaviour
             audioSource = gameObject.AddComponent<AudioSource>();
     }
 
-    void Update()
-    {
-        PlayerMovement();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            TryActivateShield();
-        // nếu muốn Space vừa bắn vừa bật khiên: gọi thêm PlayerShoot();
-    }
-
-    void PlayerMovement()
-    {
-        int x = 0, y = 0;
-        if (Input.GetKey(KeyCode.A)) x -= 1;
-        if (Input.GetKey(KeyCode.D)) x += 1;
-        if (Input.GetKey(KeyCode.S)) y -= 1;
-        if (Input.GetKey(KeyCode.W)) y += 1;
-
-        Vector3 dir = new Vector3(x, y, 0f).normalized;
-        transform.Translate(dir * speed * Time.deltaTime);
-    }
+  
 
 
-    void PlayerShoot()
-    {
-        var gm = Instantiate(missile, missileSpawnPoint.position, missileSpawnPoint.rotation);
-        Destroy(gm, destroyTime);
-    }
+  
 
     void TryActivateShield()
     {
@@ -151,6 +266,19 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        if (col.CompareTag("EnergyOrb"))
+        {
+            RefillFuel(20f); // Tăng nhiên liệu (giá trị có thể thay đổi)
+
+            if (coinPickSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(coinPickSound);
+            }
+
+            Destroy(col.gameObject); // Xóa EnergyOrb sau khi thu thập
+            return;
+        }
+
         if (col.CompareTag("Coin"))
         {
             if (audioSource != null && coinPickSound != null)
@@ -188,5 +316,8 @@ public class PlayerController : MonoBehaviour
         float elapsed = Time.time - shieldLastUsedTime;
         return Mathf.Clamp01(elapsed / shieldCooldown);
     }
+
+
+
 }
 
