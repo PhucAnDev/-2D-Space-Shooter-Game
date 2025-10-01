@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Missile
   - Coin
+  - EnergyOrb
   layers:
   - Default
   - TransparentFX

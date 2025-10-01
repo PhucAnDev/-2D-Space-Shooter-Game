@@ -26,12 +26,29 @@ public class GameManager : MonoBehaviour
     public float coinDestroyTime = 8f;
     public float coinFallSpeed = 0.5f;
 
+    [Header("Energy Orb")]
+    public GameObject energyOrbPrefab;
+    public float energyOrbSpawnInterval = 10f;
+    public float energyOrbDestroyTime = 8f;
 
+  
+
+    IEnumerator SpawnEnergyOrbs()
+    {
+        while (true)
+        {
+            Vector3 pos = new Vector3(Random.Range(-7f, 7f), 6f, 0f);
+            GameObject orb = Instantiate(energyOrbPrefab, pos, Quaternion.identity);
+            Destroy(orb, energyOrbDestroyTime);
+            yield return new WaitForSeconds(energyOrbSpawnInterval);
+        }
+    }
 
     void Start()
     {
         StartCoroutine(SpawnLoop());
-        StartCoroutine(SpawnCoins());
+        StartCoroutine(SpawnCoins()); 
+        StartCoroutine(SpawnEnergyOrbs());
     }
 
     IEnumerator SpawnLoop()
