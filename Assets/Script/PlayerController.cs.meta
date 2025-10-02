@@ -1,2 +1,18 @@
 fileFormatVersion: 2
 guid: d92322155d0da8d47abdb9da1a1e8ea2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - missile: {instanceID: 0}
+  - missileSpawnPoint: {instanceID: 0}
+  - shieldPrefab: {instanceID: 0}
+  - impactSound: {instanceID: 0}
+  - coinPickSound: {instanceID: 0}
+  - shootClip: {fileID: 8300000, guid: 609dca812b0e65948929dd12e80ad9e1, type: 3}
+  - fuelSlider: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

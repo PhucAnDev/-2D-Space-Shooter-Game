@@ -5,9 +5,20 @@ public class GameManager : MonoBehaviour
 {
     [Header("Enemy")]
     public GameObject enemyPrefab;
-    public float minInstantiateValue = -7f;
-    public float maxInstantiateValue = 7f;
+    public float minInstantiateValue = -8f;
+    public float maxInstantiateValue = 9f;
     public float enemyDestroyTime = 10f;
+
+    [Header("Enemy1")]
+    public GameObject enemyPrefab1;
+    public float minInstantiateValue1 = -8f;
+    public float maxInstantiateValue1 = 9f;
+    public float enemyDestroyTime1 = 10f;
+
+    [Header("Enemy toughness scaling")]
+    public int baseHitsToDie = 2;         // lúc đầu cần 2 hit
+    public float hitsRampEverySec = 20f;  // mỗi 20s tăng thêm 1 hit
+    public int maxHitsToDie = 10;         // (tuỳ chọn) trần trên
 
     [Header("Spawn pacing")]
     public float startSpawnInterval = 1.5f;   // lúc ð?u: 1.5s 1 con
@@ -47,6 +58,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(SpawnLoop());
+        StartCoroutine(SpawnLoop1());
         StartCoroutine(SpawnCoins()); 
         StartCoroutine(SpawnEnergyOrbs());
     }
@@ -57,25 +69,52 @@ public class GameManager : MonoBehaviour
 
         while (true)
         {
-            // th?i ði?m hi?n t?i
             float currentSpeed = baseEnemySpeed + elapsed * speedRampPerSec;
             interval = Mathf.Max(minSpawnInterval, startSpawnInterval - elapsed * spawnAccelPerSec);
 
-            // t?o enemy
             Vector3 pos = new Vector3(Random.Range(minInstantiateValue, maxInstantiateValue), 6f, 0f);
             GameObject enemy = Instantiate(enemyPrefab, pos, Quaternion.Euler(0f, 0f, 180f));
 
-            // gán t?c ð? rõi tãng d?n
             var ec = enemy.GetComponent<EnemyController>();
-            if (ec != null) ec.speed = currentSpeed;
+            if (ec != null)
+            {
+                ec.speed = currentSpeed;
 
-            // t? hu? sau X giây
+                // Tính số hit cần để chết dựa theo thời gian đã trôi
+                int extra = Mathf.FloorToInt(elapsed / hitsRampEverySec); // ví dụ 0..1..2..
+                ec.hitsToDie = Mathf.Clamp(baseHitsToDie + extra, baseHitsToDie, maxHitsToDie);
+            }
+
             Destroy(enemy, enemyDestroyTime);
-
-            // ch? theo interval hi?n t?i
             yield return new WaitForSeconds(interval);
+            elapsed += interval;
+        }
+    }
 
-            // c?ng elapsed theo ðúng th?i gian ð? ch?
+    IEnumerator SpawnLoop1()
+    {
+        float interval = startSpawnInterval;
+
+        while (true)
+        {
+            float currentSpeed = baseEnemySpeed + elapsed * speedRampPerSec;
+            interval = Mathf.Max(minSpawnInterval, startSpawnInterval - elapsed * spawnAccelPerSec);
+
+            Vector3 pos = new Vector3(Random.Range(minInstantiateValue1, maxInstantiateValue1), 6f, 0f);
+            GameObject enemy = Instantiate(enemyPrefab1, pos, Quaternion.Euler(0f, 0f, 180f));
+
+            var ec = enemy.GetComponent<EnemyController>();
+            if (ec != null)
+            {
+                ec.speed = currentSpeed;
+
+                // Tính số hit cần để chết dựa theo thời gian đã trôi
+                int extra = Mathf.FloorToInt(elapsed / hitsRampEverySec); // ví dụ 0..1..2..
+                ec.hitsToDie = Mathf.Clamp(baseHitsToDie + extra, baseHitsToDie, maxHitsToDie);
+            }
+
+            Destroy(enemy, enemyDestroyTime1);
+            yield return new WaitForSeconds(interval);
             elapsed += interval;
         }
     }

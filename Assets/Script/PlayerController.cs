@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public Transform missileSpawnPoint;
     public float destroyTime = 5f;
 
+   
+
     [Header("Shield")]
     public GameObject shieldPrefab;
     public float shieldDuration = 2f;
@@ -25,6 +27,7 @@ public class PlayerController : MonoBehaviour
     [Header("Sound")]
     public AudioClip impactSound;   // thêm clip khi va chạm
     public AudioClip coinPickSound;
+    public AudioClip shootClip;   // <= âm thanh bắn mới
     private AudioSource audioSource;
 
     public float moveSpeed = 7f;
@@ -72,14 +75,34 @@ public class PlayerController : MonoBehaviour
     {
 
         ConsumeFuel();
-
-        if (currentFuel <= 0)
-        {
-            TriggerGameOver();
-        }
+        if (currentFuel <= 0) TriggerGameOver();
 
         if (Input.GetKeyDown(KeyCode.Space))
             TryActivateShield();
+
+        // BẮN: chuột trái hoặc phím J
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.J))
+            Fire();
+    }
+
+    void Fire()
+    {
+        if (missile == null) return;
+
+        Vector3 spawnPos = missileSpawnPoint != null ? missileSpawnPoint.position : transform.position;
+        Quaternion rot = Quaternion.identity; // hướng lên (sprite của bạn đang quay lên)
+        GameObject m = Instantiate(missile, spawnPos, rot);
+
+        // đảm bảo có tag "Missile" trên prefab
+        // tự hủy sau X giây
+        Destroy(m, destroyTime);
+
+        // Phát âm thanh bắn
+        if (shootClip != null )
+        {
+            audioSource.pitch = Random.Range(0.96f, 1.04f); // biến thiên nhẹ cho đỡ lặp
+            audioSource.PlayOneShot(shootClip, 0.9f);
+        }
     }
 
     void FixedUpdate()
@@ -162,11 +185,11 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = movement;
 
         // Xoay spaceship theo hướng di chuyển (tuỳ chọn)
-        if (movement != Vector2.zero)
-        {
-            float angle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg - 90f;
-            rb.rotation = angle;
-        }
+        //if (movement != Vector2.zero)
+        //{
+        //    float angle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg - 90f;
+        //    rb.rotation = angle;
+        //}
     }
 
     void Awake()
