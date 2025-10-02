@@ -42,9 +42,7 @@ Game tập trung vào **phản xạ nhanh** và **quản lý tài nguyên** (khi
 ---
 
 ## 📸 Hình ảnh minh họa  
-
-[📹 Xem demo game](./GameDemo.mp4)
-
+https://drive.google.com/drive/folders/1DNjyWHg5_lKmjWAgXIEm20Akl3SAYQp_
 ## 🎮 Link deploy game: 
 
 https://phucandev.itch.io/project-moonlight
