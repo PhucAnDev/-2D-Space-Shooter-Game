@@ -43,7 +43,7 @@ Game tập trung vào **phản xạ nhanh** và **quản lý tài nguyên** (khi
 
 ## 📸 Hình ảnh minh họa  
 
----
+<video controls src="Screen Recording 2025-10-02 131438.mp4" title="Title"> Video Demo Game</video>
 
 ## 🎮 Link deploy game: 
 
